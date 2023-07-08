@@ -1,10 +1,10 @@
-const BING_ORIGIN = "https://www.bing.com";
+const BING_WORK_ORIGIN = "https://www.bing.com/work";
 
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
   if (!tab.url) return;
   const url = new URL(tab.url);
-  // Enables the sidebar when at bing.com
-  if (url.origin === BING_ORIGIN) {
+  // Enables the sidebar when at bing.com/work
+  if (url.href.startsWith(BING_WORK_ORIGIN)) {
     await chrome.sidePanel.setOptions({
       tabId,
       path: "sidepanel.html",
