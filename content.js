@@ -103,7 +103,6 @@ function createSearchBar() {
   const searchBarContainer = document.createElement("div");
   searchBarContainer.id = "searchBarContainer";
 
-  searchBarContainer.setAttribute("title", "Custom Work Search");
   searchBarContainer.style.position = "fixed";
   searchBarContainer.style.top = "10px";
   searchBarContainer.style.right = "10px";
@@ -201,7 +200,7 @@ function createSearchBar() {
   };
 
   // Append elements to the search bar container
-  searchBarContainer.appendChild(document.createTextNode("Custom Work Search"));
+  //searchBarContainer.appendChild(document.createTextNode("Custom Work Search"));
   searchBarContainer.appendChild(document.createTextNode("Filter Criteria:"));
   searchBarContainer.appendChild(dropdown1);
   searchBarContainer.appendChild(document.createTextNode(`Filter by:`));
