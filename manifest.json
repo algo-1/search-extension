@@ -1,21 +1,26 @@
 {
-  "name": "Tailored Document Search",
-  "version": "0.0.0.1",
   "manifest_version": 3,
-  "description": "A chromium extension to aid searching documents.",
-  "icons": {
-    "16": "icons/icon16.png",
-    "32": "icons/icon32.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+  "name": "Work Custom Search Extension",
+  "version": "0.0.0.1",
+  "description": "Adds a toggleable side panel on Bing your work site that enables you search for documents better with filters.",
+  "content_scripts": [
+    {
+      "matches": ["https://www.bing.com/*"],
+      "js": ["content.js"],
+      "css": ["style.css"]
+    }
+  ],
+  "action": {
+    "default_title": "Action Button"
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["styles.css"],
+      "matches": ["<all_urls>"]
+    }
+    ],
   "background": {
     "service_worker": "service-worker.js"
   },
-  "action": {
-    "default_title": "Click to open panel"
-  },
-  "permissions": [
-    "sidePanel", "tabs"
-  ]
+  "permissions": ["activeTab", "scripting"]
 }
