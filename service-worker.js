@@ -1,11 +1,10 @@
-function toggleSearchBar(tab) {
-  chrome.tabs.sendMessage(tab.id, { action: 'toggleSearchBar' });
-}
+let toggledSearchBar = true;
 
-chrome.browserAction.onClicked.addListener(toggleSearchBar);
-
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  if (message.action === 'getToggleState') {
-    sendResponse({ toggled: localStorage.getItem('searchBarToggled') === 'true' });
-  }
+// Called when the user clicks on the browser action.
+chrome.action.onClicked.addListener(async (tab) => {
+  // Send a message to the active tab
+  toggledSearchBar = !toggledSearchBar;
+  const response = await chrome.tabs.sendMessage(tab.id, {
+    show_content: toggledSearchBar,
+  });
 });
