@@ -1,3 +1,8 @@
+const USER_TEAM = "Team A";
+const USER_ORG = "Organization A";
+const USER_ROLE = "SWE";
+const DEFAULT_DOC_SOURCE = "Source A";
+
 // Add listener that listens to message from service-worker
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   const { show_content } = message;
@@ -109,29 +114,7 @@ function createSearchBar() {
   searchBarContainer.style.borderRadius = "5px";
   searchBarContainer.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.1)";
 
-  // Create a search bar element
-  const searchBar = document.createElement("input");
-  searchBar.type = "text";
-  searchBar.placeholder = "Ask Me Anything...";
-  searchBar.style.width = "100%";
-  searchBar.style.marginBottom = "10px";
-  searchBar.style.padding = "8px";
-  searchBar.style.border = "1px solid #ccc";
-  searchBar.style.borderRadius = "3px";
-
-  // Create a search button
-  const searchButton = document.createElement("button");
-
-  searchButton.textContent = "Search";
-  searchButton.style.width = "100%";
-  searchButton.style.padding = "8px";
-  searchButton.style.backgroundColor = "#0078D7";
-  searchButton.style.color = "white";
-  searchButton.style.border = "none";
-  searchButton.style.borderRadius = "3px";
-  searchButton.style.cursor = "pointer";
-
-  // Create the first dropdown box (Filter by Organization)
+  // Create the first dropdown box
   const dropdown1 = document.createElement("select");
   dropdown1.style.width = "100%";
   dropdown1.style.marginBottom = "10px";
@@ -139,8 +122,8 @@ function createSearchBar() {
   dropdown1.style.border = "1px solid #ccc";
   dropdown1.style.borderRadius = "3px";
 
-  // Create options for dropdown1 (organizations)
-  const filter_one = ["Organization", "Job", "Document Source"];
+  // Create options for dropdown1
+  const filter_one = ["Team", "Organization", "Role", "Document Source"];
   filter_one.forEach((filter) => {
     const option = document.createElement("option");
     option.text = filter;
@@ -154,26 +137,33 @@ function createSearchBar() {
     // Clear existing options
     dropdown2.innerHTML = "";
 
-    // Populate options based on the selected organization
+    // Populate options based on the selected options
     if (selectedLevel === "Organization") {
       const orgs = [...new Set(mockData.map((data) => data.organization))];
-      orgs.forEach((orgs) => {
+      orgs.forEach((org) => {
         const option = document.createElement("option");
-        option.text = orgs;
+        option.text = org;
         dropdown2.add(option);
       });
-    } else if (selectedLevel === "Job") {
-      const jobs = [...new Set(mockData.map((data) => data.role))];
-      jobs.forEach((jobs) => {
+    } else if (selectedLevel === "Team") {
+      const teams = [...new Set(mockData.map((data) => data.team))];
+      teams.forEach((team) => {
         const option = document.createElement("option");
-        option.text = jobs;
+        option.text = team;
+        dropdown2.add(option);
+      });
+    } else if (selectedLevel === "Role") {
+      const roles = [...new Set(mockData.map((data) => data.role))];
+      roles.forEach((role) => {
+        const option = document.createElement("option");
+        option.text = role;
         dropdown2.add(option);
       });
     } else if (selectedLevel === "Document Source") {
       const docs = [...new Set(mockData.map((data) => data.dataSource))];
-      docs.forEach((docs) => {
+      docs.forEach((doc) => {
         const option = document.createElement("option");
-        option.text = docs;
+        option.text = doc;
         dropdown2.add(option);
       });
     }
@@ -188,14 +178,35 @@ function createSearchBar() {
   dropdown2.style.border = "1px solid #ccc";
   dropdown2.style.borderRadius = "3px";
 
+  // default is Teams
+  const teams = [...new Set(mockData.map((data) => data.team))];
+  teams.forEach((team) => {
+    const option = document.createElement("option");
+    option.text = team;
+    dropdown2.add(option);
+  });
+
+  // Create a search button
+  const searchButton = document.createElement("button");
+  searchButton.textContent = "Search";
+  searchButton.style.width = "100%";
+  searchButton.style.padding = "8px";
+  searchButton.style.backgroundColor = "#0078D7";
+  searchButton.style.color = "white";
+  searchButton.style.border = "none";
+  searchButton.style.borderRadius = "3px";
+  searchButton.style.cursor = "pointer";
+  searchButton.onclick = () => {
+    performSearch(dropdown1, dropdown2, searchResultsContainer);
+  };
+
   // Append elements to the search bar container
   searchBarContainer.appendChild(document.createTextNode("Custom Work Search"));
-  searchBarContainer.appendChild(searchBar);
-  searchBarContainer.appendChild(searchButton);
   searchBarContainer.appendChild(document.createTextNode("Filter Criteria:"));
   searchBarContainer.appendChild(dropdown1);
   searchBarContainer.appendChild(document.createTextNode(`Filter by:`));
   searchBarContainer.appendChild(dropdown2);
+  searchBarContainer.appendChild(searchButton);
 
   // Create a container for displaying search results
   const searchResultsContainer = document.createElement("div");
@@ -215,19 +226,54 @@ function createSearchBar() {
 
 // Function to perform search based on selected filters
 function performSearch(dropdown1, dropdown2, searchResultsContainer) {
-  const selectedOrganization = dropdown1.value;
-  const selectedorg = dropdown2.value;
+  let selectedLevel = dropdown1.value;
+  let selectedValue = dropdown2.value;
+
+  // The filtering defaults to the user's team
+  if (!selectedLevel) {
+    selectedLevel = "Team";
+    selectedValue = USER_TEAM;
+  } else if (!selectedValue) {
+    switch (selectedLevel) {
+      case "Organization":
+        selectedValue = USER_ORG;
+        break;
+      case "Team":
+        selectedValue = USER_TEAM;
+        break;
+      case "Role":
+        selectedValue = USER_ROLE;
+        break;
+      case "Document Source":
+        selectedValue = DEFAULT_DOC_SOURCE;
+        break;
+      default:
+        selectedLevel = "Team";
+        selectedValue = USER_TEAM;
+    }
+  }
 
   // Clear previous search results
   searchResultsContainer.innerHTML = "";
 
+  const getKey = (selectedLevel) => {
+    switch (selectedLevel) {
+      case "Organization":
+        return "organization";
+      case "Team":
+        return "team";
+      case "Role":
+        return "role";
+      case "Document Source":
+        return "dataSource";
+      default:
+        return "team";
+    }
+  };
+
   // Perform search based on selected filters
   const matchingSnippets = mockData.filter((data) => {
-    return (
-      (selectedOrganization === "" ||
-        data.organization === selectedOrganization) &&
-      (selectedorg === "" || data.team === selectedorg)
-    );
+    return data[getKey(selectedLevel)] === selectedValue;
   });
 
   // Display matching snippets with numbered results
