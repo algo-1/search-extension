@@ -200,6 +200,17 @@ function createSearchBar() {
     performSearch(dropdown1, dropdown2, searchResultsContainer);
   };
 
+  searchButton.addEventListener("mouseenter", function () {
+    searchButton.style.border = "2px solid";
+    searchButton.style.backgroundColor = "grey";
+    searchButton.style.borderColor = "black";
+  });
+
+  searchButton.addEventListener("mouseleave", function () {
+    searchButton.style.border = "none";
+    searchButton.style.backgroundColor = "black";
+  });
+
   // Append elements to the search bar container
   //searchBarContainer.appendChild(document.createTextNode("Custom Work Search"));
   searchBarContainer.appendChild(document.createTextNode("Filter Criteria:"));
