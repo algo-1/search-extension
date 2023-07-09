@@ -104,10 +104,11 @@ function createSearchBar() {
   searchBarContainer.id = "searchBarContainer";
 
   searchBarContainer.style.position = "fixed";
-  searchBarContainer.style.top = "10px";
-  searchBarContainer.style.right = "10px";
+  searchBarContainer.style.top = "0";
+  searchBarContainer.style.right = "0";
   searchBarContainer.style.zIndex = "9999";
   searchBarContainer.style.width = "30%";
+  searchBarContainer.style.height = "100%";
   searchBarContainer.style.padding = "10px";
   searchBarContainer.style.backgroundColor = "#f8f8f8";
   searchBarContainer.style.borderRadius = "5px";
@@ -117,9 +118,9 @@ function createSearchBar() {
   const dropdown1 = document.createElement("select");
   dropdown1.style.width = "100%";
   dropdown1.style.marginBottom = "10px";
-  dropdown1.style.padding = "8px";
+  dropdown1.style.padding = "3px";
   dropdown1.style.border = "1px solid #ccc";
-  dropdown1.style.borderRadius = "3px";
+  dropdown1.style.borderRadius = "1px";
 
   // Create options for dropdown1
   const filter_one = ["Team", "Organization", "Role", "Document Source"];
@@ -173,9 +174,9 @@ function createSearchBar() {
   // Create the second dropdown box (Filter by Team)
   const dropdown2 = document.createElement("select");
   dropdown2.style.width = "100%";
-  dropdown2.style.padding = "8px";
+  dropdown2.style.padding = "3px";
   dropdown2.style.border = "1px solid #ccc";
-  dropdown2.style.borderRadius = "3px";
+  dropdown2.style.borderRadius = "1px";
 
   // default is Teams
   const teams = [...new Set(mockData.map((data) => data.team))];
@@ -190,7 +191,7 @@ function createSearchBar() {
   searchButton.textContent = "Search";
   searchButton.style.width = "100%";
   searchButton.style.padding = "8px";
-  searchButton.style.backgroundColor = "#0078D7";
+  searchButton.style.backgroundColor = "black";
   searchButton.style.color = "white";
   searchButton.style.border = "none";
   searchButton.style.borderRadius = "3px";
